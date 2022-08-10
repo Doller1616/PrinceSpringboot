@@ -1,0 +1,37 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  datasource:
+    password: 656f92879d44baac77d69b07ea293782d7db23c6035501b3b763b0c0acb41bd9
+    url: jdbc:postgresql://ec2-3-218-149-60.compute-1.amazonaws.com:5432/d2bkj1a15uf8j3
+    username: jfhjrkrmsctswo
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+#https://my.sendinblue.com/
+  mail:
+    host: smtp-relay.sendinblue.com
+    port: 587
+    username: abbhishekbbhardwaj@gmail.com
+    password: enter_password_here
+
+    properties:
+      mail:
+        smtp:
+          ssl:
+            trust: "*"
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
