@@ -2,8 +2,6 @@
 
 Complete login registration backend system using Spring Boot.
 
-[![YouTube Video](https://user-images.githubusercontent.com/40702606/104790682-d62ac880-578f-11eb-8353-aa68739ffe42.png)](https://www.youtube.com/watch?v=QwQuro7ekvc)
-
 - [x] Spring Boot
 - [x] Spring Security
 - [x] Java Mail
@@ -27,7 +25,7 @@ curl --location --request POST 'localhost:8080/api/v1/registration' \
 --data-raw '{
     "firstName": "Amigos",
     "lastName": "Code",
-    "email": "hellow@amigoscode.com",
+    "email": "DollerDolphin@gmail.com",
     "password": "password"
 }'
 ```
