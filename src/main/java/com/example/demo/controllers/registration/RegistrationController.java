@@ -16,10 +16,10 @@ public class RegistrationController {
     public String register(@RequestBody UserModel userModel) {
         return registrationService.register(userModel);
     }
-//
-//    @GetMapping(path = "confirm")
-//    public String confirm(@RequestParam("token") String token) {
-//        return registrationService.confirmToken(token);
-//    }
+
+    @GetMapping(path = "confirm")
+    public String confirm(@RequestParam("token") String token) {
+        return registrationService.confirmToken(token);
+    }
 
 }

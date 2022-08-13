@@ -1,7 +1,9 @@
 package com.example.demo.controllers.registration;
 
-import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Service;
+import com.example.demo.repository.otp.OtpModel;
 import com.example.demo.repository.otp.OtpService;
 import com.example.demo.repository.user.UserModel;
 import com.example.demo.repository.user.UserRoles;
@@ -18,7 +20,7 @@ public class RegistrationService {
 
     private final UserService userService;
    // private final EmailValidator emailValidator;
-  //  private final OtpService confirmationTokenService;
+    private final OtpService confirmationTokenService;
     private final EmailSender emailSender;
     
     
@@ -46,6 +48,28 @@ public class RegistrationService {
         return token;
     }
     
+    public String confirmToken(String token) {
+        OtpModel confirmationToken = confirmationTokenService
+                .getToken(token)
+                .orElseThrow(() ->
+                        new IllegalStateException("token not found"));
+
+        if (confirmationToken.getConfirmedAt() != null) {
+            throw new IllegalStateException("email already confirmed");
+        }
+
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+        if (expiredAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("token expired");
+        }
+
+        confirmationTokenService.setConfirmedAt(token);
+        
+        userService.enableAppUser(confirmationToken.getUserModel().getEmail());
+        return "confirmed";
+    }
+
     
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +

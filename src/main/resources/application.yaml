@@ -21,7 +21,7 @@ spring:
     host: smtp-relay.sendinblue.com
     port: 587
     username: abbhishekbbhardwaj@gmail.com
-    password: 
+    password: Pwd_Sendinblue_SMTP_Server
 
     properties:
       mail:
