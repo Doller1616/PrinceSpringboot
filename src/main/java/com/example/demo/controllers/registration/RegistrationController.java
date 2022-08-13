@@ -1,6 +1,9 @@
 package com.example.demo.controllers.registration;
 
 import lombok.AllArgsConstructor;
+
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.repository.user.UserModel;
@@ -13,7 +16,7 @@ public class RegistrationController {
    private final RegistrationService registrationService;
 
     @PostMapping
-    public String register(@RequestBody UserModel userModel) {
+    public String register(@Valid @RequestBody UserModel userModel) {
         return registrationService.register(userModel);
     }
 

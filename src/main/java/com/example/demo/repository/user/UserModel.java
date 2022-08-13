@@ -37,7 +37,7 @@ public class UserModel implements UserDetails {
     private String firstName;
     private String lastName;
     @NotEmpty(message = "Email is required")
-    @Email
+    @Email(message = "Invalid Email")
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
