@@ -1,6 +1,7 @@
 package com.example.demo.controllers.registration;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import com.example.demo.repository.otp.OtpModel;
@@ -13,45 +14,48 @@ import com.example.demo.utilities.EmailSender;
 import lombok.AllArgsConstructor;
 
 
+
 @Service
 @AllArgsConstructor
 public class RegistrationService {
 
 
     private final UserService userService;
-   // private final EmailValidator emailValidator;
-    private final OtpService confirmationTokenService;
+    private final OtpService otpService;
     private final EmailSender emailSender;
     
     
     
-    public String register(UserModel request) {
-//        boolean isValidEmail = emailValidator.
-//                test(request.getEmail());
-//
-//        if (!isValidEmail) {
-//            throw new IllegalStateException("email not valid");
-//        }
+    public OtpModel register(UserModel userModel) {
 
-    	String token = userService.signUpUser(
-                new UserModel(
-                        request.getFirstName(),
-                        request.getLastName(),
-                        request.getEmail(),
-                        request.getPassword(),
-                        UserRoles.USER)
-        );
+//--------- Save New User -------------------------------------------
+   	UserModel savedUser = userService.signUpUser(new UserModel(
+   			userModel.getFirstName(),
+   			userModel.getLastName(),
+   			userModel.getEmail(),
+   			userModel.getPassword(),
+            UserRoles.USER));
     	
-//    	Send Email Activation Link --------------------------------------------------------------------------
-        String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token.toString();
-        emailSender.send(request.getEmail(), buildEmail(request.getFirstName(), link));
-        return token;
+//--------- Generate OTP And Save it in to the Otp Repository -------------------------------------------
+    	 String token = UUID.randomUUID().toString();
+
+         OtpModel otpModel = new OtpModel(
+                 token,
+                 LocalDateTime.now(),
+                 LocalDateTime.now().plusMinutes(15),
+                 savedUser
+         );
+         
+         OtpModel otpStatus = otpService.saveConfirmationToken(otpModel);
+    	
+//--------- Send Email Activation Link --------------------------------------------------------------------------
+         String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
+         emailSender.send(userModel.getEmail(), buildEmail(userModel.getFirstName(), link));
+         return otpStatus;
     }
     
     public String confirmToken(String token) {
-        OtpModel confirmationToken = confirmationTokenService
-                .getToken(token)
-                .orElseThrow(() ->
+        OtpModel confirmationToken = otpService.getToken(token).orElseThrow(() ->
                         new IllegalStateException("token not found"));
 
         if (confirmationToken.getConfirmedAt() != null) {
@@ -64,7 +68,7 @@ public class RegistrationService {
             throw new IllegalStateException("token expired");
         }
 
-        confirmationTokenService.setConfirmedAt(token);
+        otpService.setConfirmedAt(token);
         
         userService.enableAppUser(confirmationToken.getUserModel().getEmail());
         return "confirmed";

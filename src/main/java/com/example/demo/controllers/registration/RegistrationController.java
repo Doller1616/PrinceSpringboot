@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.example.demo.repository.otp.OtpModel;
 import com.example.demo.repository.user.UserModel;
 
 @RestController
@@ -16,7 +17,7 @@ public class RegistrationController {
    private final RegistrationService registrationService;
 
     @PostMapping
-    public String register(@Valid @RequestBody UserModel userModel) {
+    public OtpModel register(@Valid @RequestBody UserModel userModel) {
         return registrationService.register(userModel);
     }
 

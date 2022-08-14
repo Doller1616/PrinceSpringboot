@@ -47,10 +47,7 @@ public class OtpModel {
 	    private LocalDateTime confirmedAt;
 
 	    @ManyToOne
-	    @JoinColumn(
-	    		name = "user_id",
-	            nullable = false
-	            )
+	    @JoinColumn( name = "user_id", nullable = false )
 	    private UserModel userModel;
 
 	    public OtpModel(String token,

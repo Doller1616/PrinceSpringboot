@@ -1,17 +1,14 @@
 package com.example.demo.repository.user;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.repository.otp.OtpModel;
-import com.example.demo.repository.otp.OtpService;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +19,6 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final OtpService otpService;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -35,7 +31,8 @@ public class UserService implements UserDetailsService {
     
     
 //Create User in DB -------------------------------------------------------------------------------------------------
-    public String signUpUser(UserModel userModel) {
+
+    public UserModel signUpUser(UserModel userModel) {
         boolean userExists = userRepository.findByEmail(userModel.getEmail())
                 .isPresent();
 
@@ -51,22 +48,8 @@ public class UserService implements UserDetailsService {
 
         userModel.setPassword(encodedPassword);
 
-        userRepository.save(userModel);
-        
-//--------- Generate OTP And Save it in to the Otp Repository -------------------------------------------
- 
-        String token = UUID.randomUUID().toString();
-
-        OtpModel otpModel = new OtpModel(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                userModel
-        );
-        
-        otpService.saveConfirmationToken(otpModel);
-
-        return token;
+        UserModel result =  userRepository.save(userModel);
+        return result;
     }
 
 //-------------------------------------------------------------------------------------------------------------   
